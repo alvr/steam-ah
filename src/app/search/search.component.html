@@ -1,0 +1,78 @@
+<div id="main" class="content">
+  <div class="border-padding">
+    <div class="columns">
+      <div class="column is-one-third">
+        <div class="box">
+          <h2 class="title">Steam Achievements Hunter</h2>
+          <h3 class="subtitle is-6" [hidden]="!submitted"><a href="http://steamcommunity.com/profiles/{{ profile }}/" target="_blank">My profile</a></h3>
+          <div class="field below-title">
+            <div class="control has-icons-left">
+              <input class="input" name="steamid" id="steamid" placeholder="Steam ID" (keyup.enter)="start()" [(ngModel)]="search.steamid" #steamid="ngModel" required [ngClass]="{'is-danger': steamid.errors && (steamid.dirty || steamid.touched)}">
+              <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
+              <p class="help is-danger" [style.display]="(steamid.errors && (steamid.dirty || steamid.touched)) ? 'inherit' : 'none'">The profile URL or Steam64ID is required.</p>
+            </div>
+          </div>
+          <div class="field has-addons">
+            <div class="control has-icons-left is-expanded">
+              <input class="input" name="apikey" id="apikey" placeholder="API key" (keyup.enter)="start()" [(ngModel)]="search.apikey" #apikey="ngModel" required [ngClass]="{'is-danger': apikey.errors &&(apikey.dirty || apikey.touched)}" maxlength="32" minlength="32">
+              <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
+              <p class="help is-danger" [style.display]="(apikey.errors && (apikey.dirty || apikey.touched)) ? 'inherit' : 'none'">A valid API is required.</p>
+            </div>
+            <div class="control">
+              <a class="button is-info" href="https://steamcommunity.com/dev/apikey" target="_blank">API key</a>
+            </div>
+          </div>
+          <div class="control has-addons-fullwidth has-text-centered">
+            <button class="button is-primary" (click)="start()" [disabled]="steamid.errors || steamid.value === '' || apikey.errors || apikey.value === '' || submitted">Submit</button>
+            <button class="button is-danger" (click)="cancel()" [disabled]="!submitted || !finished">Cancel</button>
+          </div>
+          <div class="field below-title" [hidden]="!submitted">
+            <progress class="progress is-small is-info" value="{{ gameList.length + without_achievements }}" max="{{ gamesIds.length }}">{{ gameList.length }}%</progress>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box">
+          <table id="results" class="table is-bordered is-striped">
+            <thead>
+            <tr>
+              <th class="half" (click)="sort('name')">
+                Game
+                <i class="fa" [ngClass]="{'fa-sort': column != 'name', 'fa-sort-asc': (column == 'name' && isDesc), 'fa-sort-desc': (column == 'name' && !isDesc) }"></i>
+              </th>
+              <th (click)="sort('locked')">
+                Locked
+                <i class="fa" [ngClass]="{'fa-sort': column != 'locked', 'fa-sort-asc': (column == 'locked' && isDesc), 'fa-sort-desc': (column == 'locked' && !isDesc) }"></i>
+              </th>
+              <th (click)="sort('unlocked')">
+                Unlocked
+                <i class="fa" [ngClass]="{'fa-sort': column != 'unlocked', 'fa-sort-asc': (column == 'unlocked' && isDesc), 'fa-sort-desc': (column == 'unlocked' && !isDesc) }"></i>
+              </th>
+              <th (click)="sort('completed')">
+                Completed
+                <i class="fa" [ngClass]="{'fa-sort': column != 'completed', 'fa-sort-asc': (column == 'completed' && isDesc), 'fa-sort-desc': (column == 'completed' && !isDesc) }"></i>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let game of gameList | orderBy: {property: column, direction: direction}">
+              <td><a href="http://steamcommunity.com/profiles/{{ profile }}/stats/appid/{{ game.id }}/" target="_blank">{{ game.name }}</a></td>
+              <td>{{ game.locked }}</td>
+              <td>{{ game.unlocked }}</td>
+              <td>{{ game.completed }}%</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <th>{{ gameList.length }}</th>
+              <th>{{ total_locked }}</th>
+              <th>{{ total_unlocked }}</th>
+              <th>{{ this.total_completed | percent }}%</th>
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

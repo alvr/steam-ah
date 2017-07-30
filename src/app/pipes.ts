@@ -1,0 +1,23 @@
+import {Pipe, PipeTransform} from '@angular/core'
+
+@Pipe({name: 'percent'})
+export class PercentagePipe implements PipeTransform {
+  transform(percent: number) {
+    return isNaN(percent) ? 0 : percent
+  }
+}
+
+@Pipe({name: 'orderBy'})
+export class OrderPipe implements PipeTransform {
+  transform(records: Array<any>, args?: any): any {
+    return records.sort(function (a, b) {
+      if (a[args.property] < b[args.property]) {
+        return -1 * args.direction
+      } else if (a[args.property] > b[args.property]) {
+        return 1 * args.direction
+      } else {
+        return 0
+      }
+    })
+  }
+}
